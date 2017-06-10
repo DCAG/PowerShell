@@ -1,5 +1,23 @@
 #Requires -RunAsAdministrator
 #Requires -Version 5
+
+<#
+.SYNOPSIS
+Install module files from local FileSystem to $env:ProgramFiles\WindowsPowerShell\Modules
+
+.DESCRIPTION
+Install module files from local FileSystem to $env:ProgramFiles\WindowsPowerShell\Modules
+
+.PARAMETER Path
+Folder of the module to install
+The folder must contain a module manifest
+
+.EXAMPLE
+.\Install-LocalModule.ps1 -Path .\ScheduledTaskMod
+
+.NOTES
+General notes
+#>
 [CmdletBinding()]
 param(
     [ValidateScript({(Test-Path $_ -PathType Container) -and (Get-ChildItem $_\*.psd1)})]
