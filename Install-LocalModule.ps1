@@ -12,4 +12,4 @@ $moduleManifest = Import-PowerShellDataFile $moduleFolder\$moduleName.psd1 # Imp
 Write-Verbose "Module `"$moduleName`" version is $($moduleManifest.ModuleVersion)"
 
 mkdir "$env:ProgramFiles\WindowsPowerShell\Modules\$moduleName\$($moduleManifest.ModuleVersion)" -Force
-Copy-Item $moduleFolder\* -Destination "$env:ProgramFiles\WindowsPowerShell\Modules\$moduleName\$($moduleManifest.ModuleVersion)\" -Force
+Copy-Item $moduleFolder\* -Destination "$env:ProgramFiles\WindowsPowerShell\Modules\$moduleName\$($moduleManifest.ModuleVersion)\" -Force -Verbose:($PSBoundParameters.Verbose -eq $true)
