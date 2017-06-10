@@ -2,12 +2,11 @@
 #Requires -Version 5
 [CmdletBinding()]
 param(
-    [ValidateScript({(Test-Path $_) -and (Get-ChildItem $_\*.psd1)})]
+    [ValidateScript({(Test-Path $_ -PathType Container) -and (Get-ChildItem $_\*.psd1)})]
     [string]$Path)
 
-$moduleFolder = Get-Item -Path $Path
-
-$moduleName   = Split-Path $moduleFolder -Leaf
+$moduleFolder   = (Get-Item -Path $Path).FullName
+$moduleName     = Split-Path $moduleFolder.FullName -Leaf
 $moduleManifest = Import-PowerShellDataFile $moduleFolder\$moduleName.psd1 -Verbose
 Write-Verbose "Module `"$moduleName`" version is $($moduleManifest.ModuleVersion)"
 
