@@ -11,7 +11,7 @@ function Get-ScheduledTaskModWrap
 {
     <#
     .SYNOPSIS
-    Get a list of scheduled tasks from the local machine or from remote computers
+    Get a list of scheduled tasks from the local computer or from remote computers
     
     .DESCRIPTION
     Wrapper of schtasks.exe
