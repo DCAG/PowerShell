@@ -31,7 +31,7 @@ Configuration WebDAV
             }
         }
              
-        Script applicationHost
+        Script WebDAVInApplicationHost
         {
             GetScript = "@{}" <#{
                 $Results = @{
@@ -46,8 +46,7 @@ Configuration WebDAV
             }
 
             TestScript = {
-                $enabled = Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Location 'Default Web Site' -Filter 'system.webServer/webdav/authoring' -Name 'enabled' | Select-Object -ExpandProperty Value
-                $enabled -eq 'True'
+                Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Location 'Default Web Site' -Filter 'system.webServer/webdav/authoring' -Name 'enabled' | Select-Object -ExpandProperty Value -First 1 -Unique
             }
 
             DependsOn = '[WindowsFeature]IISRole','[WindowsFeature]Web-DAV-Publishing','[WindowsFeature]Web-Scripting-Tools'
