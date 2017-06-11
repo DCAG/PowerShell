@@ -128,7 +128,7 @@ Configuration WebDAV
                     }
                 }
 
-                DependsOn = '[WindowsFeature]IISRole','[WindowsFeature]Web-DAV-Publishing','[WindowsFeature]Web-Scripting-Tools','[Script]applicationHost'
+                DependsOn = '[WindowsFeature]IISRole','[WindowsFeature]Web-DAV-Publishing','[WindowsFeature]Web-Scripting-Tools','[Script]WebDAVInapplicationHost'
             }
         }
     }
@@ -139,6 +139,7 @@ $ConfFolder = 'P:\Workspace\Builds\PowerShell.DSC.Configuration.WebDAV'
 
 WebDAV -ConfigurationData "$PSScriptRoot\WebDAVConfiguration.psd1" -OutputPath $ConfFolder -Verbose
 
-Start-DscConfiguration -Path $ConfFolder -Wait -Force -Verbose
+# uncomment when needed
+#Start-DscConfiguration -Path $ConfFolder -Wait -Force -Verbose
 
 #Test-DscConfiguration $ConfFolder -Verbose | Format-List * -Force

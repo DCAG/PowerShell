@@ -25,4 +25,5 @@ $ConfFolder = 'P:\Workspace\Builds\PowerShell.DSC.Configuration.WebDAV'
 
 LCMConfig -ConfigurationData "$PSScriptRoot\WebDAVConfiguration.psd1" -OutputPath $ConfFolder
 
-Set-DscLocalConfigurationManager -Path $ConfFolder -Verbose
+# uncomment when needed
+#Set-DscLocalConfigurationManager -Path $ConfFolder -Verbose

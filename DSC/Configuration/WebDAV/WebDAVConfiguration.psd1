@@ -10,16 +10,16 @@
                     AppFolder = 'D:\WebDAVShare\DAV01'
                     WebDAVAuthoringRules = @(
                         @{
-                            users  =  
-                            roles  = 
-                            path   = 
-                            access = 
+                            users  = '*'
+                            roles  = ''
+                            path   = ''
+                            access = ''
                         },
                         @{
-                            users  =  
-                            roles  = 
-                            path   = 
-                            access = 
+                            users  = ''
+                            roles  = ''
+                            path   = ''
+                            access = ''
                         }
                     ) # WebDAVAuthoringRules <END>
                 },
@@ -28,10 +28,10 @@
                     AppFolder = 'D:\WebDAVShare\DAV02'
                     WebDAVAuthoringRules = @(
                         @{
-                            users  =  
-                            roles  = 
-                            path   = 
-                            access = 
+                            users  = ''
+                            roles  = ''
+                            path   = ''
+                            access = ''
                         }
                     ) # WebDAVAuthoringRules <END>
                 }
@@ -47,16 +47,16 @@
                     AppFolder = 'D:\WebDAVShare\DAV01'
                     WebDAVAuthoringRules = @(
                         @{
-                            users  =  
-                            roles  = 
-                            path   = 
-                            access = 
+                            users  = ''
+                            roles  = ''
+                            path   = ''
+                            access = ''
                         },
                         @{
-                            users  =  
-                            roles  = 
-                            path   = 
-                            access = 
+                            users  = ''
+                            roles  = ''
+                            path   = ''
+                            access = ''
                         }
                     ) # WebDAVAuthoringRules <END>
                 }
