@@ -26,8 +26,8 @@ function Get-ObjectProperty
     ...
     limited to 100 levels of recursion.
     
-    .PARAMETER ExpandCollections
-    Allow expansions of collections to see a list of members
+    .PARAMETER SkipCollections
+    Ignores expansions of collections - to hide a list of members
 
     .EXAMPLE
     Get-ObjectProperty -InputObject (Get-Process)[0] -Property 'Memory'
@@ -59,36 +59,51 @@ function Get-ObjectProperty
     #>
     [Cmdletbinding()]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true,Position=0)]
         [object]$InputObject,
+        [Parameter(Position=1)]
         [string]$Property,
         [ValidateRange(0,100)]
         [int]$Depth = 3,
-        [switch]$ExpandCollections)
+        [switch]$SkipCollections)
 
     Begin{
         function Get-InnerObjectProperty{
-            param($InputObject, $Property, $Depth, [switch]$ExpandCollections, $Path = "[ORIGIN]", [Int32[]]$__Table = @()) #do not change input for $__Table
+            param([object]$InputObject, [string]$Property, [int]$Depth, [switch]$SkipCollections, $Path = "[ORIGIN]", [Int32[]]$__Table = @()) #do not change input for $__Table
             $__Table += $InputObject.GetHashCode()
             $InputObject.psobject.Properties.where({$_.IsGettable -and $_.Name -match $Property}).foreach({
-                if($ExpandCollections -and $_.Value -ne $null -and $_.Value.psobject.typenames.where({$_ -match 'Collection|Array'})){
-                    $Name = $_.Name
-                    $_.Value | ForEach-Object {$i = 0} {
-                        '{0}.{1}[{2}]: {3}' -f $Path, $Name, $i, $_
+                $CheckCollections = -not $SkipCollections -and $_.Value -ne $null
+                # Expand Dictionaries
+                if($CheckCollections -and $_.Value.psobject.typenames.where({$_ -match '\.[^\.]*(Dictionary|HashTable)'})){
+                    foreach($k in $_.Value.Keys)
+                    {
+                        "{0}.{1}['{2}']: {3}" -f $Path, $_.Name, $k, $_.Value[$k]
+                        if($Depth -gt 0 -and $__Table -notcontains $_.Value[$k].GetHashCode()){
+                            Get-InnerObjectProperty -InputObject $_.Value[$k] -Property $Property -Path "$Path.$($_.Name)['$k']" -Depth ($Depth-1) -__Table $__Table -SkipCollections:($SkipCollections -eq $true)
+                        }
+                    }
+                # Expand Lists, Arrays and Collections that can be iterated in foreach()
+                }elseif($CheckCollections -and $_.Value.psobject.typenames.where({$_ -match '\.[^\.]*(List|Array|Collection)'})){
+                    $i = 0
+                    foreach($v in $_.Value){
+                        '{0}.{1}[{2}]: {3}' -f $Path, $_.Name, $i, $v
+                        if($Depth -gt 0 -and $__Table -notcontains $v.GetHashCode()){
+                            Get-InnerObjectProperty -InputObject $v -Property $Property -Path "$Path.$($_.Name)[$i]" -Depth ($Depth-1) -__Table $__Table -SkipCollections:($SkipCollections -eq $true)
+                        }
                         $i += 1
                     }
+                # Regular value
                 }else{
                     '{0}.{1}: {2}' -f $Path, $_.Name, $_.Value
+                    if($Depth -gt 0 -and $_.Value -ne $null -and $__Table -notcontains $_.Value.GetHashCode()){
+                        Get-InnerObjectProperty -InputObject $_.Value -Property $Property -Path "$Path.$($_.Name)" -Depth ($Depth-1) -__Table $__Table -SkipCollections:($SkipCollections -eq $true)
+                    }
                 }
             })
-            if($Depth -gt 0){
-                $Depth = $Depth-1
-                $InputObject.psobject.Properties.where({$_.IsGettable}).where({$_.Value -ne $null -and $__Table -notcontains $_.Value.GetHashCode()}).foreach({ Get-InnerObjectProperty -InputObject $_.Value -Property $Property -Path "$Path.$($_.Name)" -Depth $Depth -__Table $__Table })
-            }
         }
     }
 
     Process{
-        Get-InnerObjectProperty -InputObject $InputObject -Property $Property -Depth $Depth -ExpandCollections:$ExpandCollections
+        Get-InnerObjectProperty -InputObject $InputObject -Property $Property -Depth $Depth -SkipCollections:($SkipCollections -eq $true)
     }
 }
