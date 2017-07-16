@@ -31,6 +31,7 @@ Function Export-SimpleXML
     [int]$Depth = 1)
 
     Begin{
+        [System.Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
         $collection = New-Object System.Collections.ArrayList
     }
     Process{
